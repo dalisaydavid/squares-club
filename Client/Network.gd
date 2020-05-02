@@ -42,8 +42,11 @@ func connect_to_server():
 # But only tell the server if the player has actually moved.
 func update_player_position(old_player_position, new_player_position):
 	if old_player_position != new_player_position:
+		
+		players[player_id]['location'] = new_player_position
+		emit_signal("players_updated")
+		
 		rpc_id(1, "update_player_position", new_player_position)
-		old_player_position = new_player_position
 
 func connected_to_server():
 	# Register ourselves with the server with initial data points.
@@ -81,8 +84,7 @@ puppet func register_player(id, new_player_data):
 # This function updates this client's player dictionary with whatever is in the "new_player_data".
 # This function assumes this client already knows the given player id exists.
 puppet func update_player(id, new_player_data):
-	for key in new_player_data:
-		players[id][key] = new_player_data[key]
+	players[id] = new_player_data
 	
 	emit_signal("players_updated")
 
