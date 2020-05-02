@@ -10,6 +10,7 @@ signal connection_succeeded
 signal server_disconnected
 signal players_updated
 signal player_registered
+signal player_unregistered
 
 var my_name = "Client"
 var my_color = null
@@ -90,6 +91,7 @@ puppet func update_player(id, new_player_data):
 puppet func unregister_player(id):
 	players.erase(id)
 	emit_signal("players_updated")
+	emit_signal("player_unregistered", id)
 
 # Returns list of player values.
 func get_player_list():

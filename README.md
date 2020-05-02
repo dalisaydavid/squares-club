@@ -5,7 +5,7 @@
 
 
 ### Run the Game
-You can find separate executables for the Client and Server for each platform here: https://urodela.itch.io/squares-club.
+You can find separate executables for the Client on each platform here: https://urodela.itch.io/squares-club. You can find the Server.pck file there as well.
 
 ### Development
 
