@@ -50,7 +50,11 @@ remote func register_player(new_player_data):
 remote func update_player_position(new_player_location):
 	var caller_id = get_tree().get_rpc_sender_id()
 	players[caller_id]['location'] = new_player_location
-	rpc("update_player", caller_id, players[caller_id]) 
+	
+	for player_id in players:
+		if player_id == caller_id:
+			continue
+		rpc_id(player_id, "update_player", caller_id, players[caller_id]) 
 
 puppetsync func unregister_player(id):
 	players.erase(id)
