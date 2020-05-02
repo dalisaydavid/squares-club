@@ -10,6 +10,7 @@ func _ready():
 
 func _on_JoinButton_pressed():
 	Network.my_name = $VBox/HBox/LineEdit.text
+	Network.ip = $VBox/HBox2/LineEdit.text
 	Network.connect_to_server()
 
 func connection_succeeded():

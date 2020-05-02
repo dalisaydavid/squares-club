@@ -16,6 +16,7 @@ var my_color = null
 
 var players = {}
 var player_id = null
+var ip = null
 
 func _ready():
 	get_tree().connect("connected_to_server", self, "connected_to_server")
@@ -25,7 +26,12 @@ func _ready():
 # Called by the "join" button in the ConnectionUI.
 func connect_to_server():
 	var host = NetworkedMultiplayerENet.new()
-	host.create_client(DEFAULT_IP, DEFAULT_PORT)
+	
+	if self.ip != null:	
+		host.create_client(self.ip, DEFAULT_PORT)
+	else:
+		host.create_client(DEFAULT_IP, DEFAULT_PORT)
+		
 	get_tree().set_network_peer(host)
 	player_id = get_tree().get_network_unique_id()
 	
