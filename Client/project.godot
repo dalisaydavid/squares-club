@@ -21,7 +21,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
-NetworkClient="*res://NetworkClient.gd"
+Network="*res://Network.gd"
 
 [input]
 

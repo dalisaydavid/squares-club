@@ -12,7 +12,7 @@ func _ready():
 	set_process(true)
 
 func _process(delta):
-	if player_id != NetworkClient.player_id or player_id == null:
+	if player_id != Network.player_id or player_id == null:
 		return
 		
 	var old_player_position = global_position
@@ -26,4 +26,4 @@ func _process(delta):
 	elif (Input.is_key_pressed(KEY_S)):
 		global_position.y +=  (walk_speed*delta)
 
-	NetworkClient.update_player_position(old_player_position, global_position)
+	Network.update_player_position(old_player_position, global_position)
