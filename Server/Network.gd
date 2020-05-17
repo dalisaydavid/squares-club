@@ -46,15 +46,19 @@ remote func register_player(new_player_data):
 
 	return new_player_id
 
-# Remotely called by a client when a client wants to tell all others that they've moved positions.
-remote func update_player_position(new_player_location):
+# Remotely called by a client when a client wants to tell all others that something about them (the calling client) has changed.
+remote func update_player(data):
+	print("From ", get_tree().get_rpc_sender_id(), ": ", data)
 	var caller_id = get_tree().get_rpc_sender_id()
-	players[caller_id]['location'] = new_player_location
 	
-	for player_id in players:
-		if player_id == caller_id:
-			continue
-		rpc_id(player_id, "update_player", caller_id, players[caller_id]) 
+	for key in data:
+		players[caller_id][key] = data[key]
+	
+		for player_id in players:
+			if player_id == caller_id:
+				continue
+				
+			rpc_id(player_id, "update_player", caller_id, {key: players[caller_id][key]}) 
 
 puppetsync func unregister_player(id):
 	players.erase(id)

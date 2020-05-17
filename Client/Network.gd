@@ -38,15 +38,16 @@ func connect_to_server():
 	
 	# If this function succeeds, the SceneTree (aka get_tree()) will emit its signal "connected_to_server".
 
-# Tells server to update this client's player position.
-# But only tell the server if the player has actually moved.
-func update_player_position(old_player_position, new_player_position):
-	if old_player_position != new_player_position:
-		
-		players[player_id]['location'] = new_player_position
-		emit_signal("players_updated")
-		
-		rpc_id(1, "update_player_position", new_player_position)
+# Tells server to update this client's player data.
+func send_to_server(data):
+	for key in data:
+		# Only send the data to the server if the data has actually changed.
+		if players[player_id][key] != data[key]:
+			
+			players[player_id]['location'] = data[key]
+			emit_signal("players_updated")
+			
+			rpc_id(1, "update_player", data)
 
 func connected_to_server():
 	# Register ourselves with the server with initial data points.
@@ -81,10 +82,11 @@ puppet func register_player(id, new_player_data):
 	emit_signal("players_updated")
 
 # Called by this client's master, remotely.
-# This function updates this client's player dictionary with whatever is in the "new_player_data".
+# This function tells this client that a different player has updated their data.
 # This function assumes this client already knows the given player id exists.
 puppet func update_player(id, new_player_data):
-	players[id] = new_player_data
+	for key in new_player_data:
+		players[id][key] = new_player_data[key]
 	
 	emit_signal("players_updated")
 
