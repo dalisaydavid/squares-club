@@ -3,7 +3,7 @@ extends Sprite
 signal ammo_updated
 
 const Bullet = preload("res://weapons/bullet/Bullet.tscn")
-const MAX_AMMO = 15
+const MAX_AMMO = 3
 const MAX_RELOAD_TIME_IN_SECONDS = 1
 var ammo = MAX_AMMO
 
@@ -13,7 +13,6 @@ func _ready():
 	$ReloadTimer.wait_time = MAX_RELOAD_TIME_IN_SECONDS
 	
 func _process(delta):
-	
 	if get_parent().is_network_master():
 		if ammo <= 0 and $ReloadTimer.is_stopped():
 			reload(MAX_AMMO-ammo)
@@ -36,10 +35,28 @@ func _on_Timer_timeout():
 
 sync func shoot():
 	var bullet = Bullet.instance()
-	bullet.live_time = 3
+	bullet.live_time = 0.25
 	get_node('/root/Game').add_child(bullet)
 	bullet.global_position = global_position
+	bullet.DAMAGE = 30
 	bullet.direction = (cursor_position-bullet.global_position).normalized()
+	bullet.get_node('LiveTimer').start()
+	
+	var bullet_up = Bullet.instance()
+	bullet_up.live_time = 0.25
+	get_node('/root/Game').add_child(bullet_up)
+	bullet_up.global_position = global_position
+	bullet_up.DAMAGE = 30
+	bullet_up.direction = (cursor_position-bullet.global_position).normalized().rotated(deg2rad(15))
+	bullet_up.get_node('LiveTimer').start()
+	
+	var bullet_down = Bullet.instance()
+	bullet_down.live_time = 0.25
+	get_node('/root/Game').add_child(bullet_down)
+	bullet_down.global_position = global_position
+	bullet_down.DAMAGE = 30
+	bullet_down.direction = (cursor_position-bullet.global_position).normalized().rotated(deg2rad(-15))
+	bullet_down.get_node('LiveTimer').start()
 
 func reload(ammo):
 	# Reload time is dynamically set based on how much ammo is actually being reloaded.

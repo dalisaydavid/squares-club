@@ -95,6 +95,20 @@ func _on_RespawnTimer_timeout():
 	health_points = MAX_HP
 	update_health_bar()
 
+func equip(gun):
+	var gun_scene
+	if gun == "rifle":
+		gun_scene = preload('res://weapons/rifle/Rifle.tscn')
+	elif gun == 'butter':
+		gun_scene = preload('res://weapons/butter/Butter.tscn')
+		
+	var new_gun = gun_scene.instance()
+	new_gun.name = 'Rifle'
+	new_gun.position = Vector2(108, -1)
+	$Rifle_.remove_child($Rifle_/Rifle)
+	$Rifle_.add_child(new_gun)
+	get_node('/root/Game/CanvasLayer/AmmoHUD').connect_rifle()
+
 func init(start_name, start_position):
 	$GUI/Nickname.text = start_name
 	global_position = start_position

@@ -2,7 +2,7 @@
 
 [ext_resource path="res://player/Player.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
-[ext_resource path="res://weapons/rifle/Rifle.tscn" type="PackedScene" id=3]
+[ext_resource path="res://weapons/butter/Butter.tscn" type="PackedScene" id=3]
 [ext_resource path="res://interface/GUI.tscn" type="PackedScene" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -22,6 +22,8 @@ scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 2 )
 
 [node name="GUI" parent="." instance=ExtResource( 5 )]
+margin_left = -77.0
+margin_right = 79.0
 
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 3.0
@@ -32,7 +34,6 @@ one_shot = true
 [node name="Rifle_" type="Node2D" parent="."]
 
 [node name="Rifle" parent="Rifle_" instance=ExtResource( 3 )]
-position = Vector2( 76, 2 )
-scale = Vector2( 1, 1 )
+position = Vector2( 108, -1 )
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_RespawnTimer_timeout"]
 [connection signal="timeout" from="StaminaTimer" to="." method="_on_StaminaTimer_timeout"]

@@ -1,6 +1,7 @@
 extends Control
 
 const label_prefix = 'Ammo: '
+const gun_label_prefix = 'Gun: '
 var rifle
 func _ready():
 	call_deferred('connect_rifle')
