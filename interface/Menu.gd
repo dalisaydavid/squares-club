@@ -13,7 +13,7 @@ func _on_JoinButton_pressed():
 	start_game()
 
 func start_game():
-	get_tree().change_scene('res://Game.tscn')
+	get_tree().change_scene('res://Map0.tscn')
 
 func _on_HostField_text_changed(new_text):
 	server_host = new_text

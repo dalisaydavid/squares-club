@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/godot_floor.png-72f10cb41bd03cc2cd498d4fc06a0835.stex"
+path="res://.import/godot_floor.png-752a67ca2cb5850a913d2c4c0f41ce14.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://godot_floor.png"
-dest_files=[ "res://.import/godot_floor.png-72f10cb41bd03cc2cd498d4fc06a0835.stex" ]
+source_file="res://tilemaps/godot_floor.png"
+dest_files=[ "res://.import/godot_floor.png-752a67ca2cb5850a913d2c4c0f41ce14.stex" ]
 
 [params]
 

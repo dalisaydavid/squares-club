@@ -21,13 +21,18 @@ position = Vector2( 0, -0.5 )
 scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 2 )
 
-[node name="Rifle" parent="." instance=ExtResource( 3 )]
-position = Vector2( 40, 10 )
-scale = Vector2( 1, 1 )
-
 [node name="GUI" parent="." instance=ExtResource( 5 )]
 
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 3.0
 one_shot = true
+
+[node name="StaminaTimer" type="Timer" parent="."]
+
+[node name="Rifle_" type="Node2D" parent="."]
+
+[node name="Rifle" parent="Rifle_" instance=ExtResource( 3 )]
+position = Vector2( 76, 2 )
+scale = Vector2( 1, 1 )
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_RespawnTimer_timeout"]
+[connection signal="timeout" from="StaminaTimer" to="." method="_on_StaminaTimer_timeout"]

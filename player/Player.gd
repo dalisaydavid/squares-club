@@ -2,76 +2,69 @@ extends KinematicBody2D
 
 const MOVE_SPEED = 10
 const MAX_HP = 100
+const MAX_STAMINA = 100
 
-enum Direction { IDLE, UP, DOWN, LEFT, RIGHT }
+enum HorizontalDirection { IDLE, LEFT, RIGHT }
+enum VerticalDirection { IDLE, UP, DOWN }
 
 puppet var puppet_position = Vector2()
-puppet var puppet_direction = null
+puppet var puppet_cursor_position = Vector2()
 
 var health_points = MAX_HP
-var dash_speed = 0
+var stamina = MAX_STAMINA
 
 func _ready():
 	update_health_bar()
 
 func _physics_process(delta):
-	var direction = Direction.IDLE
+	var h_direction = HorizontalDirection.IDLE
+	var v_direction = VerticalDirection.IDLE
 	if is_network_master():
 		if Input.is_action_pressed('left'):
-			direction = Direction.LEFT
+			h_direction = HorizontalDirection.LEFT
 		elif Input.is_action_pressed('right'):
-			direction = Direction.RIGHT
-		elif Input.is_action_pressed('up'):
-			direction = Direction.UP
-		elif Input.is_action_pressed('down'):
-			direction = Direction.DOWN
+			h_direction = HorizontalDirection.RIGHT
 			
-		if Input.is_action_pressed('dash'):
-			dash_speed = 10
-		elif Input.is_action_just_released('dash'):
-			dash_speed = 0
+		if Input.is_action_pressed('up'):
+			v_direction = VerticalDirection.UP
+		elif Input.is_action_pressed('down'):
+			v_direction = VerticalDirection.DOWN
 		
 		# Change the position of this node on all peers.
-		rset_unreliable('puppet_position', position)
+		rset_unreliable('puppet_position', global_position)
 		
-		# Change the direction of this node on all peers.
-		rset('puppet_direction', direction)
+		var cursor_position = get_global_mouse_position()
+		$Rifle_.look_at(cursor_position)
+		rset_unreliable('puppet_cursor_position', cursor_position)
 		
-		move(direction)
+		if stamina <= 0 and $StaminaTimer.is_stopped():
+			$StaminaTimer.start()
+			
+		if Input.is_action_pressed('dash') and $StaminaTimer.is_stopped():
+			move(h_direction, v_direction, 10)
+			stamina -= 10
+		else:
+			move(h_direction, v_direction)
 	else:
-		move(puppet_direction)
+		global_position = puppet_position
+		$Rifle_.look_at(puppet_cursor_position)
 
-func move(direction):
+func move(horizontal_direction, vertical_direction, dash_speed=0):
 	if is_network_master():
-		match direction:
-			Direction.IDLE:
-				return
-			Direction.UP:
-				move_and_collide(Vector2(0, -(MOVE_SPEED+dash_speed)))
-			Direction.DOWN:
-				move_and_collide(Vector2(0, (MOVE_SPEED+dash_speed)))
-			Direction.LEFT:
-				move_and_collide(Vector2(-(MOVE_SPEED+dash_speed), 0))
-				_rifle_left()
-			Direction.RIGHT:
-				move_and_collide(Vector2((MOVE_SPEED+dash_speed), 0))
-				_rifle_right()
-	else:
-		match direction:
-			Direction.LEFT:
-				_rifle_left()
-			Direction.RIGHT:
-				_rifle_right()
+		var movement_vector = Vector2(0,0)
+		match horizontal_direction:
+			HorizontalDirection.LEFT:
+				movement_vector.x = -(MOVE_SPEED+dash_speed)
+			HorizontalDirection.RIGHT:
+				movement_vector.x = (MOVE_SPEED+dash_speed)
+				
+		match vertical_direction:
+			VerticalDirection.UP:
+				movement_vector.y = -(MOVE_SPEED+dash_speed)
+			VerticalDirection.DOWN:
+				movement_vector.y = (MOVE_SPEED+dash_speed)
 		
-		position = puppet_position
-		
-func _rifle_right():
-	$Rifle.position.x = abs($Rifle.position.x)
-	$Rifle.flip_h = false
-
-func _rifle_left():
-	$Rifle.position.x = -abs($Rifle.position.x)
-	$Rifle.flip_h = true
+		move_and_collide(movement_vector)
 
 func update_health_bar():
 	$GUI/HealthBar.value = health_points
@@ -86,7 +79,7 @@ func damage(value):
 sync func die():
 	$RespawnTimer.start()
 	set_physics_process(false)
-	$Rifle.set_process(false)
+	$Rifle_/Rifle.set_process(false)
 	for child in get_children():
 		if child.has_method('hide'):
 			child.hide()
@@ -94,7 +87,7 @@ sync func die():
 
 func _on_RespawnTimer_timeout():
 	set_physics_process(true)
-	$Rifle.set_process(true)
+	$Rifle_/Rifle.set_process(true)
 	for child in get_children():
 		if child.has_method('show'):
 			child.show()
@@ -105,3 +98,7 @@ func _on_RespawnTimer_timeout():
 func init(start_name, start_position):
 	$GUI/Nickname.text = start_name
 	global_position = start_position
+
+func _on_StaminaTimer_timeout():
+	stamina = MAX_STAMINA
+	$StaminaTimer.stop()
