@@ -9,6 +9,7 @@ puppet var puppet_position = Vector2()
 puppet var puppet_direction = null
 
 var health_points = MAX_HP
+var dash_speed = 0
 
 func _ready():
 	update_health_bar()
@@ -24,6 +25,11 @@ func _physics_process(delta):
 			direction = Direction.UP
 		elif Input.is_action_pressed('down'):
 			direction = Direction.DOWN
+			
+		if Input.is_action_pressed('dash'):
+			dash_speed = 10
+		elif Input.is_action_just_released('dash'):
+			dash_speed = 0
 		
 		# Change the position of this node on all peers.
 		rset_unreliable('puppet_position', position)
@@ -41,14 +47,14 @@ func move(direction):
 			Direction.IDLE:
 				return
 			Direction.UP:
-				move_and_collide(Vector2(0, -MOVE_SPEED))
+				move_and_collide(Vector2(0, -(MOVE_SPEED+dash_speed)))
 			Direction.DOWN:
-				move_and_collide(Vector2(0, MOVE_SPEED))
+				move_and_collide(Vector2(0, (MOVE_SPEED+dash_speed)))
 			Direction.LEFT:
-				move_and_collide(Vector2(-MOVE_SPEED, 0))
+				move_and_collide(Vector2(-(MOVE_SPEED+dash_speed), 0))
 				_rifle_left()
 			Direction.RIGHT:
-				move_and_collide(Vector2(MOVE_SPEED, 0))
+				move_and_collide(Vector2((MOVE_SPEED+dash_speed), 0))
 				_rifle_right()
 	else:
 		match direction:

@@ -1,7 +1,7 @@
 extends Camera2D
 
 export var shake_on = false
-export var shake_amount = 1
+export var shake_amount = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -10,8 +10,8 @@ func _ready():
 func _physics_process(delta):
 	global_position = get_node('/root/Game/' + str(get_tree().get_network_unique_id())).global_position
 	
-	# if shake_on:
-	#	shake()
+	if shake_on:
+		shake()
 
 func start_shake():
 	shake_on = true
